@@ -1,0 +1,22 @@
+{
+  "123456": {
+    "studentId": "STU001",
+    "fullName": "John Smith"
+  },
+  "789012": {
+    "studentId": "STU002", 
+    "fullName": "Maria Garcia"
+  },
+  "345678": {
+    "studentId": "STU003",
+    "fullName": "Alex Johnson"
+  },
+  "901234": {
+    "studentId": "STU004",
+    "fullName": "Sarah Chen"
+  },
+  "567890": {
+    "studentId": "STU005",
+    "fullName": "David Rodriguez"
+  }
+}
