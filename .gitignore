@@ -1,0 +1,5 @@
+node_modules/
+.env
+attendance.csv
+students.json
+*.log

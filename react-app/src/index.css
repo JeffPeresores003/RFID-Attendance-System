@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans bg-gradient-to-br from-green to-green-light via-primary-400 min-h-screen;
+  }
+}
+
+@layer components {
+  .spinner {
+    @apply w-10 h-10 border-4 border-gray-200 border-t-green rounded-full animate-spin mx-auto;
+  }
+}
