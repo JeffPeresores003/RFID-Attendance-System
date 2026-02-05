@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../supabaseClient';
@@ -16,6 +16,90 @@ const Dashboard = () => {
   const [arduinoConnected, setArduinoConnected] = useState(false);
   const [socket, setSocket] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
+
+  // Load students from Supabase
+  const loadStudents = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('students')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      setStudents(data || []);
+    } catch (error) {
+      console.error('Error loading students:', error);
+    }
+  }, []);
+
+  // Load attendance from Supabase
+  const loadAttendance = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('attendance')
+        .select('*')
+        .order('scanned_at', { ascending: false })
+        .limit(100);
+      
+      if (error) throw error;
+      setAttendance(data || []);
+    } catch (error) {
+      console.error('Error loading attendance:', error);
+    }
+  }, []);
+
+  // Register a student
+  const registerStudent = useCallback(async (uid, studentId, fullName) => {
+    try {
+      const { data, error } = await supabase
+        .from('students')
+        .insert({
+          uid,
+          student_id: studentId,
+          full_name: fullName,
+          registered_by: user.id
+        })
+        .select();
+
+      if (error) throw error;
+      
+      alert(`Student registered successfully!\nUID: ${uid}\nStudent ID: ${studentId}\nName: ${fullName}`);
+      loadStudents();
+      setRegistrationMode(false);
+      
+      if (socket) {
+        socket.emit('cancel-registration');
+      }
+    } catch (error) {
+      console.error('Error registering student:', error);
+      alert('Failed to register student: ' + error.message);
+    }
+  }, [user, socket, loadStudents]);
+
+  // Cancel registration
+  const cancelRegistration = useCallback(() => {
+    if (socket) {
+      socket.emit('cancel-registration');
+      setRegistrationMode(false);
+    }
+  }, [socket]);
+
+  // Handle new student registration prompt
+  const handleNewStudentRegistration = useCallback((uid) => {
+    const studentId = prompt('Enter Student ID (School ID):');
+    if (!studentId) {
+      cancelRegistration();
+      return;
+    }
+
+    const fullName = prompt('Enter Student Full Name:');
+    if (!fullName) {
+      cancelRegistration();
+      return;
+    }
+
+    registerStudent(uid, studentId, fullName);
+  }, [cancelRegistration, registerStudent]);
 
   // Connect to Socket.IO server
   useEffect(() => {
@@ -47,7 +131,7 @@ const Dashboard = () => {
     });
 
     return () => newSocket.close();
-  }, [registrationMode]);
+  }, [registrationMode, handleNewStudentRegistration, loadAttendance]);
 
   // Update time every second
   useEffect(() => {
@@ -89,6 +173,7 @@ const Dashboard = () => {
   useEffect(() => {
     loadStudents();
     loadAttendance();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleLogout = async () => {
@@ -100,56 +185,6 @@ const Dashboard = () => {
     if (socket) {
       socket.emit('start-registration');
       setRegistrationMode(true);
-    }
-  };
-
-  const cancelRegistration = () => {
-    if (socket) {
-      socket.emit('cancel-registration');
-      setRegistrationMode(false);
-    }
-  };
-
-  const handleNewStudentRegistration = (uid) => {
-    const studentId = prompt('Enter Student ID (School ID):');
-    if (!studentId) {
-      cancelRegistration();
-      return;
-    }
-
-    const fullName = prompt('Enter Student Full Name:');
-    if (!fullName) {
-      cancelRegistration();
-      return;
-    }
-
-    registerStudent(uid, studentId, fullName);
-  };
-
-  const registerStudent = async (uid, studentId, fullName) => {
-    try {
-      const { data, error } = await supabase
-        .from('students')
-        .insert({
-          uid,
-          student_id: studentId,
-          full_name: fullName,
-          registered_by: user.id
-        })
-        .select();
-
-      if (error) throw error;
-      
-      alert(`Student registered successfully!\nUID: ${uid}\nStudent ID: ${studentId}\nName: ${fullName}`);
-      loadStudents();
-      setRegistrationMode(false);
-      
-      if (socket) {
-        socket.emit('cancel-registration');
-      }
-    } catch (error) {
-      console.error('Error registering student:', error);
-      alert('Failed to register student: ' + error.message);
     }
   };
 
