@@ -3,17 +3,36 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
+import SystemAdmin from './components/SystemAdmin';
 
-// Protected Route Component
-const ProtectedRoute = ({ children }) => {
+// Protected Route Component for Teachers
+const TeacherRoute = ({ children }) => {
   const { user } = useAuth();
-  return user ? children : <Navigate to="/" />;
+  if (!user) return <Navigate to="/" />;
+  if (user.role !== 'teacher') return <Navigate to="/" />;
+  return children;
+};
+
+// Protected Route Component for Admins
+const AdminRoute = ({ children }) => {
+  const { user } = useAuth();
+  if (!user) return <Navigate to="/" />;
+  if (user.role !== 'admin') return <Navigate to="/" />;
+  return children;
 };
 
 // Public Route (redirect to dashboard if already logged in)
 const PublicRoute = ({ children }) => {
   const { user } = useAuth();
-  return !user ? children : <Navigate to="/dashboard" />;
+  if (!user) return children;
+  
+  // Redirect based on role
+  if (user.role === 'teacher') {
+    return <Navigate to="/teacher/dashboard" />;
+  } else if (user.role === 'admin') {
+    return <Navigate to="/admin/dashboard" />;
+  }
+  return children;
 };
 
 function App() {
@@ -30,13 +49,23 @@ function App() {
             } 
           />
           <Route 
-            path="/dashboard" 
+            path="/teacher/dashboard" 
             element={
-              <ProtectedRoute>
+              <TeacherRoute>
                 <Dashboard />
-              </ProtectedRoute>
+              </TeacherRoute>
             } 
           />
+          <Route 
+            path="/admin/dashboard" 
+            element={
+              <AdminRoute>
+                <SystemAdmin />
+              </AdminRoute>
+            } 
+          />
+          {/* Legacy route redirect */}
+          <Route path="/dashboard" element={<Navigate to="/teacher/dashboard" />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </AuthProvider>
