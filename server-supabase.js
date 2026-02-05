@@ -165,6 +165,13 @@ app.post("/start-registration", authenticateUser, (req, res) => {
     registrationMode = true;
     pendingRegistration = null;
     io.emit("registration-mode", { active: true });
+    // Notify Arduino to switch to registration LED pattern
+    try {
+        if (port && port.isOpen) port.write('START_REG\n');
+        else console.log('Serial port not open - START_REG not sent');
+    } catch (e) {
+        console.warn('Failed to write START_REG to serial port', e.message);
+    }
     res.json({ status: "Registration mode activated. Please scan RFID card." });
 });
 
@@ -200,10 +207,22 @@ app.post("/register-student", authenticateUser, async (req, res) => {
         pendingRegistration = null;
         io.emit("registration-mode", { active: false });
         io.emit("student-registered", { uid, studentId, fullName });
+        // Tell Arduino registration succeeded (LED pattern)
+        try {
+            if (port && port.isOpen) port.write('REG_SUCCESS\n');
+            else console.log('Serial port not open - REG_SUCCESS not sent');
+        } catch (e) {
+            console.warn('Failed to write REG_SUCCESS to serial port', e.message);
+        }
         
         res.json({ status: "Student registered successfully", data });
     } catch (error) {
         console.error('Error registering student:', error);
+        try {
+            if (port && port.isOpen) port.write('REG_FAIL\n');
+        } catch (e) {
+            console.warn('Failed to write REG_FAIL to serial port', e.message);
+        }
         res.status(500).json({ error: 'Failed to register student' });
     }
 });
@@ -213,6 +232,13 @@ app.post("/cancel-registration", authenticateUser, (req, res) => {
     registrationMode = false;
     pendingRegistration = null;
     io.emit("registration-mode", { active: false });
+    // Notify Arduino to cancel registration pattern
+    try {
+        if (port && port.isOpen) port.write('CANCEL_REG\n');
+        else console.log('Serial port not open - CANCEL_REG not sent');
+    } catch (e) {
+        console.warn('Failed to write CANCEL_REG to serial port', e.message);
+    }
     res.json({ status: "Registration cancelled" });
 });
 
@@ -222,6 +248,17 @@ app.post("/toggle-scanning", authenticateUser, (req, res) => {
     io.emit("scanning-mode", { paused: scanningPaused });
     const status = scanningPaused ? "RFID scanning paused" : "RFID scanning resumed";
     console.log(status);
+    // Notify Arduino about scanning state so it can change LED pattern
+    try {
+        if (port && port.isOpen) {
+            if (scanningPaused) port.write('SCANNING_PAUSED\n');
+            else port.write('SCANNING_RESUMED\n');
+        } else {
+            console.log('Serial port not open - scanning state not sent');
+        }
+    } catch (e) {
+        console.warn('Failed to write scanning state to serial port', e.message);
+    }
     res.json({ status, paused: scanningPaused });
 });
 

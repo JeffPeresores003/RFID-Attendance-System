@@ -12,10 +12,17 @@ const Dashboard = () => {
   const [attendance, setAttendance] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [registrationMode, setRegistrationMode] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [newStudentName, setNewStudentName] = useState('');
+  const [newStudentGrade, setNewStudentGrade] = useState(user?.grade || '');
+  const [newStudentId, setNewStudentId] = useState('');
+  const [awaitingScan, setAwaitingScan] = useState(false);
+  const [scannedUid, setScannedUid] = useState('');
   const [scanningPaused, setScanningPaused] = useState(false);
   const [arduinoConnected, setArduinoConnected] = useState(false);
   const [socket, setSocket] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [lastExported, setLastExported] = useState('--:--');
 
   // Profile state
   const [showProfile, setShowProfile] = useState(false);
@@ -59,7 +66,7 @@ const Dashboard = () => {
   }, []);
 
   // Register a student
-  const registerStudent = useCallback(async (uid, studentId, fullName) => {
+  const registerStudent = useCallback(async (uid, studentId, fullName, grade) => {
     try {
       const { error } = await supabase
         .from('students')
@@ -67,6 +74,7 @@ const Dashboard = () => {
           uid,
           student_id: studentId,
           full_name: fullName,
+          grade: grade || null,
           registered_by: user.id
         })
         .select();
@@ -108,7 +116,13 @@ const Dashboard = () => {
       return;
     }
 
-    registerStudent(uid, studentId, fullName);
+    const grade = prompt('Enter Grade (1-6):');
+    if (!grade) {
+      cancelRegistration();
+      return;
+    }
+
+    registerStudent(uid, studentId, fullName, grade);
   }, [cancelRegistration, registerStudent]);
 
   // Connect to Socket.IO server
@@ -135,13 +149,26 @@ const Dashboard = () => {
     });
 
     newSocket.on('rfid-scanned', (data) => {
+      // If teacher registration modal is open and we're awaiting a scan, use modal flow
+      if (showRegisterModal && awaitingScan) {
+        setScannedUid(data.uid);
+        // If teacher already filled student id and name, register automatically
+        if (newStudentId && newStudentName) {
+          registerStudent(data.uid, newStudentId, newStudentName, newStudentGrade);
+          setAwaitingScan(false);
+          setShowRegisterModal(false);
+        }
+        return;
+      }
+
+      // Fallback: old registration mode flow
       if (registrationMode) {
         handleNewStudentRegistration(data.uid);
       }
     });
 
     return () => newSocket.close();
-  }, [registrationMode, handleNewStudentRegistration, loadAttendance]);
+  }, [registrationMode, handleNewStudentRegistration, loadAttendance, showRegisterModal, awaitingScan, newStudentId, newStudentName, newStudentGrade, registerStudent]);
 
   // Update time every second
   useEffect(() => {
@@ -208,11 +235,28 @@ const Dashboard = () => {
     }
   };
 
-  const startRegistration = () => {
+  // (legacy) startRegistration removed - modal flow uses triggerScanFromModal
+
+  const triggerScanFromModal = () => {
+    if (!newStudentId || !newStudentName) {
+      alert('Please enter Student ID and Full Name before scanning.');
+      return;
+    }
+    setAwaitingScan(true);
     if (socket) {
       socket.emit('start-registration');
-      setRegistrationMode(true);
     }
+  };
+
+  const cancelRegisterModal = () => {
+    if (socket) {
+      socket.emit('cancel-registration');
+    }
+    setAwaitingScan(false);
+    setScannedUid('');
+    setShowRegisterModal(false);
+    setNewStudentId('');
+    setNewStudentName('');
   };
 
   const toggleScanning = () => {
@@ -223,19 +267,69 @@ const Dashboard = () => {
 
   const downloadCSV = () => {
     const serverUrl = process.env.REACT_APP_SERVER_URL || 'http://localhost:3000';
+    // Record export timestamp (per-user) so we can display when they last exported
+    try {
+      const now = new Date().toISOString();
+      if (user && user.id) {
+        localStorage.setItem(`lastExport_${user.id}`, now);
+        setLastExported(new Date(now).toLocaleString());
+      } else {
+        localStorage.setItem('lastExport_global', now);
+        setLastExported(new Date(now).toLocaleString());
+      }
+    } catch (e) {
+      console.warn('Unable to persist export timestamp', e);
+    }
+
     window.open(`${serverUrl}/download`, '_blank');
   };
 
+  // Modal to show registered students for the teacher's grade
+  const [showStudentsModal, setShowStudentsModal] = useState(false);
+
   // Statistics
-  const totalScans = attendance.length;
   const today = new Date().toISOString().split('T')[0];
-  const todayScans = attendance.filter(item => {
-    const scanDate = new Date(item.scanned_at).toISOString().split('T')[0];
-    return scanDate === today;
+
+  // Students visible to this teacher (teachers see only their grade)
+  const visibleStudents = (user?.role === 'admin')
+    ? students
+    : students.filter(s => parseInt(s.grade) === parseInt(user?.grade));
+
+  // set of student_ids (or uid as fallback) who scanned today
+  const attendeesTodaySet = new Set(
+    attendance
+      .filter(item => new Date(item.scanned_at).toISOString().split('T')[0] === today)
+      .map(item => item.student_id || item.uid)
+      .filter(Boolean)
+  );
+
+  // Number of distinct students who scanned today
+  const studentsAttendees = attendeesTodaySet.size;
+
+  // Last exported attendance time (from localStorage)
+  const loadLastExport = () => {
+    try {
+      if (user && user.id) {
+        const v = localStorage.getItem(`lastExport_${user.id}`);
+        return v ? new Date(v).toLocaleString() : '--:--';
+      }
+      const v = localStorage.getItem('lastExport_global');
+      return v ? new Date(v).toLocaleString() : '--:--';
+    } catch (e) {
+      return '--:--';
+    }
+  };
+
+  useEffect(() => {
+    setLastExported(loadLastExport());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+  // Absent students = registered students who did NOT scan today
+  const absentStudents = visibleStudents.filter(s => {
+    const sid = s.student_id || s.uid || s.id;
+    return !attendeesTodaySet.has(sid);
   }).length;
-  const lastScan = attendance.length > 0 
-    ? new Date(attendance[0].scanned_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
-    : '--:--';
 
   // Search filter
   const filteredAttendance = attendance.filter(item => {
@@ -246,6 +340,8 @@ const Dashboard = () => {
       item.uid?.toLowerCase().includes(searchLower)
     );
   });
+
+  
 
   return (
     <div className="min-h-screen p-5 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
@@ -298,6 +394,8 @@ const Dashboard = () => {
             <p className="text-white/90 text-lg font-medium">An Automated Attendance System</p>
           </div>
         </div>
+
+        {/* Students list removed — modal still available via Registered Students card */}
 
         {/* Status Bar */}
         <div className="px-8 py-6 bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200">
@@ -377,16 +475,14 @@ const Dashboard = () => {
             </button>
             
             <button
-              onClick={registrationMode ? cancelRegistration : startRegistration}
-              disabled={registrationMode}
+              onClick={() => setShowRegisterModal(true)}
               className="px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-xl font-bold 
-                         transition-all hover:scale-105 hover:shadow-xl flex items-center gap-2
-                         disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"
+                         transition-all hover:scale-105 hover:shadow-xl flex items-center gap-2"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
               </svg>
-              <span>{registrationMode ? 'Scanning Card...' : 'Register Student'}</span>
+              <span>Register a Student</span>
             </button>
             
             <button
@@ -412,8 +508,8 @@ const Dashboard = () => {
                 </svg>
               </div>
             </div>
-            <div className="text-4xl font-bold mb-2">{totalScans}</div>
-            <div className="text-white/90 text-sm font-medium uppercase tracking-wider">Total Check-ins</div>
+            <div className="text-4xl font-bold mb-2">{studentsAttendees}</div>
+              <div className="text-white/90 text-sm font-medium uppercase tracking-wider">Students Attendees</div>
           </div>
           
           <div className="bg-gradient-to-br from-blue-500 to-indigo-500 p-6 rounded-2xl text-white shadow-xl hover:scale-105 transition-transform">
@@ -424,8 +520,8 @@ const Dashboard = () => {
                 </svg>
               </div>
             </div>
-            <div className="text-4xl font-bold mb-2">{todayScans}</div>
-            <div className="text-white/90 text-sm font-medium uppercase tracking-wider">Today's Check-ins</div>
+            <div className="text-4xl font-bold mb-2">{absentStudents}</div>
+            <div className="text-white/90 text-sm font-medium uppercase tracking-wider">Absent Students</div>
           </div>
           
           <div className="bg-gradient-to-br from-purple-500 to-pink-500 p-6 rounded-2xl text-white shadow-xl hover:scale-105 transition-transform">
@@ -436,8 +532,8 @@ const Dashboard = () => {
                 </svg>
               </div>
             </div>
-            <div className="text-4xl font-bold mb-2">{lastScan}</div>
-            <div className="text-white/90 text-sm font-medium uppercase tracking-wider">Last Check-in</div>
+            <div className="text-3xl font-semibold mb-2">{lastExported && lastExported !== '--:--' ? lastExported : 'Never'}</div>
+            <div className="text-white/90 text-sm font-medium uppercase tracking-wider">Last Exported Attendance</div>
           </div>
           
           <div className="bg-gradient-to-br from-orange-500 to-amber-500 p-6 rounded-2xl text-white shadow-xl hover:scale-105 transition-transform">
@@ -448,8 +544,15 @@ const Dashboard = () => {
                 </svg>
               </div>
             </div>
-            <div className="text-4xl font-bold mb-2">{students.length}</div>
-            <div className="text-white/90 text-sm font-medium uppercase tracking-wider">Registered Students</div>
+            <div
+              onClick={() => setShowStudentsModal(true)}
+              role="button"
+              tabIndex={0}
+              className="text-4xl font-bold mb-2 cursor-pointer"
+            >
+              {visibleStudents.length}
+            </div>
+              <div className="text-white/90 text-sm font-medium uppercase tracking-wider">Registered Students</div>
           </div>
         </div>
 
@@ -597,6 +700,120 @@ const Dashboard = () => {
             </div>
           )}
         </div>
+
+        {/* Register Student Modal */}
+        {showRegisterModal && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full">
+              <h3 className="text-2xl font-bold text-slate-800 mb-6">Register Student</h3>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-slate-600">Student ID *</label>
+                <input
+                  type="text"
+                  value={newStudentId}
+                  onChange={(e) => setNewStudentId(e.target.value)}
+                  placeholder="e.g. 2026-001"
+                  className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-slate-600">Full Name *</label>
+                <input
+                  type="text"
+                  value={newStudentName}
+                  onChange={(e) => setNewStudentName(e.target.value)}
+                  placeholder="Student Full Name"
+                  className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-slate-600">Grade *</label>
+                <select
+                  value={newStudentGrade}
+                  onChange={(e) => setNewStudentGrade(e.target.value)}
+                  className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:border-emerald-500"
+                >
+                  <option value="">Select Grade</option>
+                  <option value="1">Grade 1</option>
+                  <option value="2">Grade 2</option>
+                  <option value="3">Grade 3</option>
+                  <option value="4">Grade 4</option>
+                  <option value="5">Grade 5</option>
+                  <option value="6">Grade 6</option>
+                </select>
+              </div>
+
+              <div className="mb-4">
+                <div className="text-sm text-slate-600 mb-2">Scan ID</div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={triggerScanFromModal}
+                    className={`px-4 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-semibold ${awaitingScan ? 'opacity-80' : ''}`}
+                  >
+                    {awaitingScan ? 'Scanning... Tap card' : 'Scan ID'}
+                  </button>
+                  <div className="text-sm text-slate-500">{scannedUid ? `Scanned UID: ${scannedUid}` : 'No card scanned yet'}</div>
+                </div>
+              </div>
+
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => {
+                    // If UID already scanned and fields filled, register immediately
+                    if (scannedUid && newStudentId && newStudentName && newStudentGrade) {
+                      registerStudent(scannedUid, newStudentId, newStudentName, newStudentGrade);
+                      setShowRegisterModal(false);
+                      setAwaitingScan(false);
+                    } else {
+                      alert('Please scan the card and fill all fields before registering.');
+                    }
+                  }}
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-semibold"
+                >
+                  Register
+                </button>
+                <button
+                  type="button"
+                  onClick={cancelRegisterModal}
+                  className="flex-1 px-6 py-3 bg-slate-500 hover:bg-slate-600 text-white rounded-xl font-semibold"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Students Modal (shows registered students for this teacher's grade) */}
+        {showStudentsModal && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-center z-50 p-6 pt-24">
+            <div className="bg-white rounded-3xl shadow-2xl p-6 max-w-3xl w-full">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-bold">Registered Students {user?.role !== 'admin' ? `(Grade ${user?.grade})` : ''}</h3>
+                <button onClick={() => setShowStudentsModal(false)} className="px-3 py-2 bg-slate-100 rounded-lg">Close</button>
+              </div>
+              <div className="space-y-3 max-h-80 overflow-auto">
+                {visibleStudents.length === 0 ? (
+                  <div className="text-sm text-slate-500">No students found for this grade.</div>
+                ) : (
+                  visibleStudents.map(s => (
+                    <div key={s.id} className="p-3 border border-slate-100 rounded-xl flex items-center justify-between">
+                      <div>
+                        <div className="font-semibold text-slate-800">{s.full_name}</div>
+                        <div className="text-sm text-slate-600">ID: {s.student_id || 'N/A'}</div>
+                        <div className="text-sm text-slate-600">Grade {s.grade}</div>
+                      </div>
+                      <div className="text-sm text-slate-500">{s.uid ? `UID: ${s.uid}` : ''}</div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Profile Modal */}
         {showProfile && (
