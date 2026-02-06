@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../supabaseClient';
+import LoadingAnimation from './LoadingAnimation';
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ const StudentDashboard = () => {
   const [attendance, setAttendance] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Load student's own attendance records from Supabase
   useEffect(() => {
@@ -40,6 +42,8 @@ const StudentDashboard = () => {
   }, []);
 
   const handleLogout = async () => {
+    setIsLoggingOut(true);
+    await new Promise(resolve => setTimeout(resolve, 2500));
     await signOut();
     navigate('/');
   };
@@ -71,7 +75,14 @@ const StudentDashboard = () => {
   });
 
   return (
-    <div className="min-h-screen p-5 bg-gradient-to-br from-blue-50 to-green-50">
+    <>
+      {isLoggingOut && (
+        <LoadingAnimation 
+          message="Signing out..."
+          portal="student"
+        />
+      )}
+      <div className="min-h-screen p-5 bg-gradient-to-br from-blue-50 to-green-50">
       <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 text-white py-8 px-8 relative overflow-hidden">
@@ -336,6 +347,7 @@ const StudentDashboard = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

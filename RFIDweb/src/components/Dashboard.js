@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../supabaseClient';
 import io from 'socket.io-client';
+import LoadingAnimation from './LoadingAnimation';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ const Dashboard = () => {
   const [socket, setSocket] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [lastExported, setLastExported] = useState('--:--');
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Profile state
   const [showProfile, setShowProfile] = useState(false);
@@ -184,6 +186,8 @@ const Dashboard = () => {
   }, []);
 
   const handleLogout = async () => {
+    setIsLoggingOut(true);
+    await new Promise(resolve => setTimeout(resolve, 2500));
     await signOut();
     navigate('/');
   };
@@ -344,7 +348,14 @@ const Dashboard = () => {
   
 
   return (
-    <div className="min-h-screen p-5 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <>
+      {isLoggingOut && (
+        <LoadingAnimation 
+          message="Signing out..."
+          portal="teacher"
+        />
+      )}
+      <div className="min-h-screen p-5 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       <div className="max-w-7xl mx-auto bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-white/20">
         {/* Header */}
         <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white py-8 px-8 relative overflow-hidden">
@@ -909,6 +920,7 @@ const Dashboard = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 

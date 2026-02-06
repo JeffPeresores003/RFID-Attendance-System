@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import LoadingAnimation from './LoadingAnimation';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -36,6 +37,9 @@ const Login = () => {
       const { data, error } = await signIn(formData.username, formData.password, selectedPortal);
       if (error) throw error;
       
+      // Show loading animation for a better UX
+      await new Promise(resolve => setTimeout(resolve, 3500));
+      
       // Navigate based on role
       if (data.role === 'teacher') {
         navigate('/teacher/dashboard');
@@ -46,7 +50,6 @@ const Login = () => {
       }
     } catch (error) {
       setError(error.message || 'Invalid credentials');
-    } finally {
       setLoading(false);
     }
   };
@@ -58,8 +61,15 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-5 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden max-w-5xl w-full border border-white/20">
+    <>
+      {loading && (
+        <LoadingAnimation 
+          message={`Signing in to ${selectedPortal === 'teacher' ? 'Teacher' : 'Administrator'} Portal`}
+          portal={selectedPortal}
+        />
+      )}
+      <div className="min-h-screen flex items-center justify-center p-5 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+        <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden max-w-5xl w-full border border-white/20">
         {/* Header */}
         <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white py-12 px-8 text-center relative overflow-hidden">
           <div className="absolute inset-0 bg-black/10"></div>
@@ -272,6 +282,7 @@ const Login = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

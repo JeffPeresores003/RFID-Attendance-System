@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../supabaseClient';
 import io from 'socket.io-client';
+import LoadingAnimation from './LoadingAnimation';
 
 const SystemAdmin = () => {
   const navigate = useNavigate();
@@ -29,6 +30,7 @@ const SystemAdmin = () => {
   const [rfidScanning, setRfidScanning] = useState(false);
   const [scannedUID, setScannedUID] = useState('');
   const [arduinoConnected, setArduinoConnected] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleRegisterRFID = async (uid) => {
     if (!selectedStudent || !uid) return;
@@ -265,6 +267,8 @@ const SystemAdmin = () => {
   };
 
   const handleLogout = async () => {
+    setIsLoggingOut(true);
+    await new Promise(resolve => setTimeout(resolve, 2500));
     await signOut();
     navigate('/');
   };
@@ -303,7 +307,14 @@ const SystemAdmin = () => {
   const totalRegisteredRFID = registeredStudents.length;
 
   return (
-    <div className="min-h-screen p-5 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <>
+      {isLoggingOut && (
+        <LoadingAnimation 
+          message="Signing out..."
+          portal="admin"
+        />
+      )}
+      <div className="min-h-screen p-5 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="bg-gradient-to-br from-purple-600 via-pink-600 to-red-600 text-white py-8 px-8 rounded-3xl shadow-2xl mb-8 relative overflow-hidden">
@@ -776,6 +787,7 @@ const SystemAdmin = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 
