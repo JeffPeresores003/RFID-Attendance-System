@@ -355,10 +355,10 @@ const Dashboard = () => {
           portal="teacher"
         />
       )}
-      <div className="min-h-screen p-5 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      <div className="max-w-7xl mx-auto bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-white/20">
+      <div className="min-h-screen p-5 bg-[#F7F5EF]">
+      <div className="max-w-7xl mx-auto bg-[#F7F5EF] backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-[#6E8B6D]/20">
         {/* Header */}
-        <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white py-8 px-8 relative overflow-hidden">
+        <div className="bg-gradient-to-r from-[#0F5C4B] to-[#6E8B6D] text-white py-8 px-8 relative overflow-hidden">
           <div className="absolute inset-0 bg-black/10"></div>
           
           {/* User Info */}
@@ -378,7 +378,7 @@ const Dashboard = () => {
           <div className="absolute top-6 right-8 flex items-center gap-3 z-10">
             <button
               onClick={() => setShowProfile(true)}
-              className="bg-white/20 hover:bg-white hover:text-emerald-600 px-5 py-2.5 border-2 border-white rounded-xl text-sm font-semibold transition-all flex items-center gap-2 group"
+              className="bg-white/20 hover:bg-white hover:text-[#0F5C4B] px-5 py-2.5 border-2 border-white rounded-xl text-sm font-semibold transition-all flex items-center gap-2 group"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -388,7 +388,7 @@ const Dashboard = () => {
             
             <button
               onClick={handleLogout}
-              className="bg-white/20 hover:bg-white hover:text-emerald-600 px-5 py-2.5 border-2 border-white rounded-xl text-sm font-semibold transition-all flex items-center gap-2 group"
+              className="bg-white/20 hover:bg-white hover:text-[#0F5C4B] px-5 py-2.5 border-2 border-white rounded-xl text-sm font-semibold transition-all flex items-center gap-2 group"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -409,18 +409,18 @@ const Dashboard = () => {
         {/* Students list removed — modal still available via Registered Students card */}
 
         {/* Status Bar */}
-        <div className="px-8 py-6 bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200">
+        <div className="px-8 py-6 bg-[#F7F5EF] border-b border-[#6E8B6D]/30">
           <div className="flex flex-wrap items-center justify-between gap-6">
             <div className="flex flex-wrap items-center gap-6">
               {/* Arduino Status */}
               <div className={`flex items-center gap-3 font-semibold ${
-                arduinoConnected ? 'text-emerald-600' : 'text-red-600'
+                arduinoConnected ? 'text-[#0F5C4B]' : 'text-red-600'
               }`}>
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                  arduinoConnected ? 'bg-emerald-100' : 'bg-red-100'
+                  arduinoConnected ? 'bg-[#6E8B6D]/20' : 'bg-red-100'
                 }`}>
                   <span className={`w-3 h-3 rounded-full animate-pulse-slow ${
-                    arduinoConnected ? 'bg-emerald-600' : 'bg-red-600'
+                    arduinoConnected ? 'bg-[#0F5C4B]' : 'bg-red-600'
                   }`}></span>
                 </div>
                 <span>{arduinoConnected ? 'Device Connected' : 'Device Disconnected'}</span>
@@ -471,7 +471,7 @@ const Dashboard = () => {
               onClick={toggleScanning}
               className={`px-6 py-3 rounded-xl text-white font-bold transition-all hover:scale-105 hover:shadow-xl flex items-center gap-2 ${
                 scanningPaused 
-                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600' 
+                  ? 'bg-gradient-to-r from-[#0F5C4B] to-[#6E8B6D]' 
                   : 'bg-gradient-to-r from-red-600 to-rose-600'
               }`}
             >
@@ -487,7 +487,7 @@ const Dashboard = () => {
             
             <button
               onClick={() => setShowRegisterModal(true)}
-              className="px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-xl font-bold 
+              className="px-6 py-3 bg-gradient-to-r from-[#E0B23C] to-[#6E8B6D] text-[#1F1F1F] rounded-xl font-bold 
                          transition-all hover:scale-105 hover:shadow-xl flex items-center gap-2"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -498,7 +498,7 @@ const Dashboard = () => {
             
             <button
               onClick={downloadCSV}
-              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold 
+              className="px-6 py-3 bg-gradient-to-r from-[#6E8B6D] to-[#0F5C4B] text-white rounded-xl font-bold 
                          transition-all hover:scale-105 hover:shadow-xl flex items-center gap-2"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -510,8 +510,8 @@ const Dashboard = () => {
         </div>
 
         {/* Statistics */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-8 bg-gradient-to-br from-slate-50 to-slate-100">
-          <div className="bg-gradient-to-br from-emerald-500 to-teal-500 p-6 rounded-2xl text-white shadow-xl hover:scale-105 transition-transform">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-8 bg-[#F7F5EF]">
+          <div className="bg-gradient-to-br from-[#0F5C4B] to-[#6E8B6D] p-6 rounded-2xl text-white shadow-xl hover:scale-105 transition-transform">
             <div className="flex items-start justify-between mb-4">
               <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -523,7 +523,7 @@ const Dashboard = () => {
               <div className="text-white/90 text-sm font-medium uppercase tracking-wider">Students Attendees</div>
           </div>
           
-          <div className="bg-gradient-to-br from-blue-500 to-indigo-500 p-6 rounded-2xl text-white shadow-xl hover:scale-105 transition-transform">
+          <div className="bg-gradient-to-br from-[#6E8B6D] to-[#0F5C4B] p-6 rounded-2xl text-white shadow-xl hover:scale-105 transition-transform">
             <div className="flex items-start justify-between mb-4">
               <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -535,7 +535,7 @@ const Dashboard = () => {
             <div className="text-white/90 text-sm font-medium uppercase tracking-wider">Absent Students</div>
           </div>
           
-          <div className="bg-gradient-to-br from-purple-500 to-pink-500 p-6 rounded-2xl text-white shadow-xl hover:scale-105 transition-transform">
+          <div className="bg-gradient-to-br from-[#E0B23C] to-[#6E8B6D] p-6 rounded-2xl text-white shadow-xl hover:scale-105 transition-transform">
             <div className="flex items-start justify-between mb-4">
               <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -572,7 +572,7 @@ const Dashboard = () => {
           {/* Table Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
             <h2 className="text-2xl text-slate-800 font-bold flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-[#0F5C4B] to-[#6E8B6D] rounded-xl flex items-center justify-center">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 </svg>
@@ -661,10 +661,10 @@ const Dashboard = () => {
                     return (
                       <tr
                         key={item.id}
-                        className={`border-b border-slate-100 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50 transition-all
-                          ${isRecent ? 'animate-highlight bg-gradient-to-r from-emerald-50 to-teal-50' : ''}`}
+                        className={`border-b border-slate-100 hover:bg-gradient-to-r hover:from-[#0F5C4B]/5 hover:to-[#6E8B6D]/5 transition-all
+                          ${isRecent ? 'animate-highlight bg-gradient-to-r from-[#0F5C4B]/10 to-[#6E8B6D]/10' : ''}`}
                       >
-                        <td className="px-6 py-4 font-bold text-emerald-600">
+                        <td className="px-6 py-4 font-bold text-[#0F5C4B]">
                           {item.student_id || 'Unknown'}
                         </td>
                         <td className="px-6 py-4 font-semibold text-slate-800">
@@ -689,7 +689,7 @@ const Dashboard = () => {
                           <span
                             className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold
                               ${item.status === 'Registered'
-                                ? 'bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-700 border-2 border-emerald-300'
+                                ? 'bg-gradient-to-r from-[#0F5C4B]/20 to-[#6E8B6D]/20 text-[#0F5C4B] border-2 border-[#0F5C4B]/30'
                                 : 'bg-gradient-to-r from-red-100 to-rose-100 text-red-700 border-2 border-red-300'
                               }`}
                           >
@@ -762,7 +762,7 @@ const Dashboard = () => {
                 <div className="flex items-center gap-3">
                   <button
                     onClick={triggerScanFromModal}
-                    className={`px-4 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-semibold ${awaitingScan ? 'opacity-80' : ''}`}
+                    className={`px-4 py-3 bg-gradient-to-r from-[#0F5C4B] to-[#6E8B6D] text-white rounded-xl font-semibold ${awaitingScan ? 'opacity-80' : ''}`}
                   >
                     {awaitingScan ? 'Scanning... Tap card' : 'Scan ID'}
                   </button>
@@ -782,7 +782,7 @@ const Dashboard = () => {
                       alert('Please scan the card and fill all fields before registering.');
                     }
                   }}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-semibold"
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-[#0F5C4B] to-[#6E8B6D] text-white rounded-xl font-semibold"
                 >
                   Register
                 </button>
@@ -898,7 +898,7 @@ const Dashboard = () => {
                   <button
                     type="submit"
                     disabled={passwordLoading}
-                    className="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 disabled:opacity-50 text-white rounded-xl font-semibold transition-all"
+                    className="flex-1 px-6 py-3 bg-gradient-to-r from-[#0F5C4B] to-[#6E8B6D] hover:from-[#0F5C4B]/90 hover:to-[#6E8B6D]/90 disabled:opacity-50 text-white rounded-xl font-semibold transition-all"
                   >
                     {passwordLoading ? 'Changing...' : 'Change Password'}
                   </button>

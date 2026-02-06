@@ -7,17 +7,17 @@ const LoadingAnimation = ({ message = 'Loading...', portal = 'teacher' }) => {
   // Debug: Log when component renders
   console.log('🎬 LoadingAnimation rendered:', { message, portal });
   
-  // Portal-specific gradient colors
+  // Portal-specific gradient colors - Official San Jose Elementary School Palette
   const gradientColors = {
-    teacher: 'from-emerald-600 via-teal-600 to-cyan-600',
-    admin: 'from-purple-600 via-pink-600 to-red-600',
-    student: 'from-blue-600 via-indigo-600 to-purple-600'
+    teacher: 'from-[#0F5C4B] via-[#6E8B6D] to-[#0F5C4B]',
+    admin: 'from-[#E0B23C] via-[#6E8B6D] to-[#E0B23C]',
+    student: 'from-[#6E8B6D] via-[#0F5C4B] to-[#6E8B6D]'
   };
 
   const bgColors = {
-    teacher: 'bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600',
-    admin: 'bg-gradient-to-r from-purple-600 via-pink-600 to-red-600',
-    student: 'bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600'
+    teacher: 'bg-gradient-to-r from-[#0F5C4B] via-[#6E8B6D] to-[#0F5C4B]',
+    admin: 'bg-gradient-to-r from-[#E0B23C] via-[#6E8B6D] to-[#E0B23C]',
+    student: 'bg-gradient-to-r from-[#6E8B6D] via-[#0F5C4B] to-[#6E8B6D]'
   };
 
   return (
@@ -38,11 +38,11 @@ const LoadingAnimation = ({ message = 'Loading...', portal = 'teacher' }) => {
             />
           ) : (
             <div className="relative w-40 h-40">
-              <div className={`absolute inset-0 rounded-full border-8 border-slate-200`}></div>
+              <div className={`absolute inset-0 rounded-full border-8 border-[#F7F5EF]`}></div>
               <div className={`absolute inset-0 rounded-full border-8 border-transparent ${
-                portal === 'teacher' ? 'border-t-emerald-600 border-r-teal-600' :
-                portal === 'admin' ? 'border-t-purple-600 border-r-pink-600' :
-                'border-t-blue-600 border-r-indigo-600'
+                portal === 'teacher' ? 'border-t-[#0F5C4B] border-r-[#6E8B6D]' :
+                portal === 'admin' ? 'border-t-[#E0B23C] border-r-[#6E8B6D]' :
+                'border-t-[#6E8B6D] border-r-[#0F5C4B]'
               } animate-spin`}></div>
             </div>
           )}

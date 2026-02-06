@@ -82,10 +82,10 @@ const StudentDashboard = () => {
           portal="student"
         />
       )}
-      <div className="min-h-screen p-5 bg-gradient-to-br from-blue-50 to-green-50">
-      <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
+      <div className="min-h-screen p-5 bg-[#F7F5EF]">
+      <div className="max-w-6xl mx-auto bg-[#F7F5EF] rounded-2xl shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 text-white py-8 px-8 relative overflow-hidden">
+        <div className="bg-gradient-to-br from-[#0F5C4B] via-[#0F5C4B] to-[#6E8B6D] text-white py-8 px-8 relative overflow-hidden">
           <div className="absolute inset-0 bg-black/10"></div>
           
           {/* User Info */}
@@ -104,7 +104,7 @@ const StudentDashboard = () => {
           {/* Logout Button */}
           <button
             onClick={handleLogout}
-            className="absolute top-5 right-8 bg-white/20 hover:bg-white backdrop-blur-sm hover:text-indigo-600 px-5 py-2 border-2 border-white/30 hover:border-white rounded-lg text-sm font-medium transition-all flex items-center gap-2 z-10"
+            className="absolute top-5 right-8 bg-white/20 hover:bg-white backdrop-blur-sm hover:text-[#0F5C4B] px-5 py-2 border-2 border-white/30 hover:border-white rounded-lg text-sm font-medium transition-all flex items-center gap-2 z-10"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -123,11 +123,11 @@ const StudentDashboard = () => {
         </div>
 
         {/* Time Display */}
-        <div className="px-8 py-4 bg-blue-50 border-b border-blue-100 text-center">
-          <div className="text-2xl font-light text-gray-700">
+        <div className="px-8 py-4 bg-[#F7F5EF] border-b border-[#6E8B6D]/20 text-center">
+          <div className="text-2xl font-light text-[#1F1F1F]">
             {currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
           </div>
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-[#6E8B6D]">
             {currentTime.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </div>
         </div>
@@ -136,7 +136,7 @@ const StudentDashboard = () => {
         <div className="p-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             {/* Total Attendance */}
-            <div className="bg-gradient-to-br from-blue-500 to-indigo-500 text-white p-6 rounded-2xl shadow-xl hover:scale-105 transition-transform">
+            <div className="bg-gradient-to-br from-[#0F5C4B] to-[#6E8B6D] text-white p-6 rounded-2xl shadow-xl hover:scale-105 transition-transform">
               <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-4">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -147,7 +147,7 @@ const StudentDashboard = () => {
             </div>
 
             {/* Today */}
-            <div className="bg-gradient-to-br from-emerald-500 to-teal-500 text-white p-6 rounded-2xl shadow-xl hover:scale-105 transition-transform">
+            <div className="bg-gradient-to-br from-[#6E8B6D] to-[#0F5C4B] text-white p-6 rounded-2xl shadow-xl hover:scale-105 transition-transform">
               <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-4">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -158,7 +158,7 @@ const StudentDashboard = () => {
             </div>
 
             {/* This Week */}
-            <div className="bg-gradient-to-br from-purple-500 to-pink-500 text-white p-6 rounded-2xl shadow-xl hover:scale-105 transition-transform">
+            <div className="bg-gradient-to-br from-[#E0B23C] to-[#6E8B6D] text-white p-6 rounded-2xl shadow-xl hover:scale-105 transition-transform">
               <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-4">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
@@ -169,7 +169,7 @@ const StudentDashboard = () => {
             </div>
 
             {/* Last Scan */}
-            <div className="bg-gradient-to-br from-orange-500 to-amber-500 text-white p-6 rounded-2xl shadow-xl hover:scale-105 transition-transform">
+            <div className="bg-gradient-to-br from-[#6E8B6D] to-[#E0B23C] text-white p-6 rounded-2xl shadow-xl hover:scale-105 transition-transform">
               <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-4">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -181,17 +181,17 @@ const StudentDashboard = () => {
           </div>
 
           {/* Profile Card */}
-          <div className="bg-gradient-to-br from-slate-50 to-slate-100 p-8 rounded-2xl mb-8 border-2 border-slate-200 shadow-lg">
+          <div className="bg-gradient-to-br from-[#F7F5EF] to-white p-8 rounded-2xl mb-8 border-2 border-[#6E8B6D]/20 shadow-lg">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#0F5C4B] to-[#6E8B6D] rounded-xl flex items-center justify-center">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </div>
-              <h2 className="text-2xl font-bold text-slate-800">Student Profile</h2>
+              <h2 className="text-2xl font-bold text-[#1F1F1F]">Student Profile</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+              <div className="bg-white p-5 rounded-xl shadow-sm border border-[#6E8B6D]/20">
                 <div className="text-sm text-slate-600 font-semibold mb-1 uppercase tracking-wider">Full Name</div>
                 <div className="text-lg text-slate-900 font-medium">{user?.full_name}</div>
               </div>
@@ -199,30 +199,30 @@ const StudentDashboard = () => {
                 <div className="text-sm text-slate-600 font-semibold mb-1 uppercase tracking-wider">Student ID</div>
                 <div className="text-lg text-slate-900 font-medium">{user?.student_id}</div>
               </div>
-              <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+              <div className="bg-white p-5 rounded-xl shadow-sm border border-[#6E8B6D]/20">
                 <div className="text-sm text-slate-600 font-semibold mb-1 uppercase tracking-wider">Email</div>
                 <div className="text-lg text-slate-900 font-medium">{user?.email}</div>
               </div>
-              <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+              <div className="bg-white p-5 rounded-xl shadow-sm border border-[#6E8B6D]/20">
                 <div className="text-sm text-slate-600 font-semibold mb-1 uppercase tracking-wider">Status</div>
                 <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></span>
-                  <span className="text-lg text-emerald-600 font-bold">Active</span>
+                  <span className="w-3 h-3 bg-[#0F5C4B] rounded-full animate-pulse"></span>
+                  <span className="text-lg text-[#0F5C4B] font-bold">Active</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Attendance History */}
-          <div className="bg-gradient-to-br from-slate-50 to-slate-100 p-8 rounded-2xl">
+          <div className="bg-gradient-to-br from-[#F7F5EF] to-white p-8 rounded-2xl">
             <div className="flex flex-wrap items-center justify-between gap-6 mb-8">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-gradient-to-br from-[#0F5C4B] to-[#6E8B6D] rounded-xl flex items-center justify-center">
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                   </svg>
                 </div>
-                <h2 className="text-2xl font-bold text-slate-800">My Attendance History</h2>
+                <h2 className="text-2xl font-bold text-[#1F1F1F]">My Attendance History</h2>
               </div>
 
               {/* Search */}
@@ -237,17 +237,17 @@ const StudentDashboard = () => {
                   placeholder="Search by date..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-12 pr-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none w-full sm:w-64 bg-white"
+                  className="pl-12 pr-4 py-3 border-2 border-[#6E8B6D]/30 rounded-xl focus:border-[#0F5C4B] focus:ring-2 focus:ring-[#0F5C4B]/20 focus:outline-none w-full sm:w-64 bg-white"
                 />
               </div>
             </div>
 
             {/* Table */}
-            <div className="overflow-x-auto bg-white rounded-2xl shadow-lg border border-slate-200">
+            <div className="overflow-x-auto bg-white rounded-2xl shadow-lg border border-[#6E8B6D]/20">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-gradient-to-r from-blue-100 to-indigo-100">
-                    <th className="px-6 py-4 text-left font-bold text-blue-900">
+                  <tr className="bg-gradient-to-r from-[#0F5C4B]/20 to-[#6E8B6D]/20">
+                    <th className="px-6 py-4 text-left font-bold text-[#1F1F1F]">
                       <div className="flex items-center gap-2">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
@@ -255,7 +255,7 @@ const StudentDashboard = () => {
                         <span>#</span>
                       </div>
                     </th>
-                    <th className="px-6 py-4 text-left font-bold text-blue-900">
+                    <th className="px-6 py-4 text-left font-bold text-[#1F1F1F]">
                       <div className="flex items-center gap-2">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -263,7 +263,7 @@ const StudentDashboard = () => {
                         <span>Date</span>
                       </div>
                     </th>
-                    <th className="px-6 py-4 text-left font-bold text-blue-900">
+                    <th className="px-6 py-4 text-left font-bold text-[#1F1F1F]">
                       <div className="flex items-center gap-2">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -271,7 +271,7 @@ const StudentDashboard = () => {
                         <span>Time</span>
                       </div>
                     </th>
-                    <th className="px-6 py-4 text-left font-bold text-blue-900">
+                    <th className="px-6 py-4 text-left font-bold text-[#1F1F1F]">
                       <div className="flex items-center gap-2">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -290,8 +290,8 @@ const StudentDashboard = () => {
                       return (
                         <tr 
                           key={item.id}
-                          className={`border-b border-slate-100 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all ${
-                            isToday ? 'bg-gradient-to-r from-emerald-50 to-teal-50' : ''
+                          className={`border-b border-[#6E8B6D]/10 hover:bg-gradient-to-r hover:from-[#0F5C4B]/5 hover:to-[#6E8B6D]/5 transition-all ${
+                            isToday ? 'bg-gradient-to-r from-[#0F5C4B]/10 to-[#6E8B6D]/10' : ''
                           }`}
                         >
                           <td className="px-6 py-4 text-slate-700 font-semibold">{index + 1}</td>
@@ -314,7 +314,7 @@ const StudentDashboard = () => {
                             </div>
                           </td>
                           <td className="px-6 py-4">
-                            <span className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-700 rounded-xl text-sm font-bold border-2 border-emerald-300">
+                            <span className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#0F5C4B]/20 to-[#6E8B6D]/20 text-[#0F5C4B] rounded-xl text-sm font-bold border-2 border-[#0F5C4B]/30">
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
@@ -328,8 +328,8 @@ const StudentDashboard = () => {
                     <tr>
                       <td colSpan="4" className="px-6 py-12 text-center text-slate-500">
                         <div className="flex flex-col items-center gap-3">
-                          <div className="w-16 h-16 bg-gradient-to-br from-slate-200 to-slate-300 rounded-2xl flex items-center justify-center">
-                            <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="w-16 h-16 bg-gradient-to-br from-[#6E8B6D]/20 to-[#6E8B6D]/30 rounded-2xl flex items-center justify-center">
+                            <svg className="w-8 h-8 text-[#6E8B6D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                             </svg>
                           </div>
